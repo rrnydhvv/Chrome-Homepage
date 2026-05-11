@@ -58,7 +58,7 @@
             position: absolute;
             bottom: 70px;
             right: 24px;
-            background-color: rgba(20, 20, 20, 0.355);
+            background-color: rgba(0, 0, 0, 0.25);
             color: rgba(248, 247, 244, 0.85);
             padding: 20px;
             border-radius: 12px;
@@ -75,16 +75,8 @@
         /* Hiển thị bảng điều khiển khi có class 'show' */
         #settings-panel.show { display: flex; }
 
-        .setting-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .setting-group label { font-size: 13px; color: rgba(248, 247, 244, 0.6); }
-        
-        .setting-group input[type="file"] {
-            background-color: rgba(18, 18, 18, 0.6);
+        input[type="file"] {
+            background-color: rgba(0, 0, 0, 0.3);
             color: rgba(248, 247, 244, 0.9);
             border: 1px solid rgba(255,255,255,0.12);
             padding: 8px 10px;
@@ -95,11 +87,11 @@
             transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
             background-clip: padding-box;
         }
-        .setting-group input[type="file"]:hover {
+        input[type="file"]:hover {
             background-color: rgba(255, 255, 255, 0.09);
             border-color: rgba(255,255,255,0.22);
         }
-        .setting-group input[type="file"]:focus-visible {
+        input[type="file"]:focus-visible {
             outline: none;
             border-color: rgba(255,255,255,0.35);
             box-shadow: 0 0 0 2px rgba(255,255,255,0.12);
@@ -110,7 +102,7 @@
         .custom-select-trigger {
             width: 100%;
             text-align: left;
-            background-color: rgba(18, 18, 18, 0.6);
+            background-color: rgba(0, 0, 0, 0.3);
             color: rgba(248, 247, 244, 0.92);
             border: 1px solid rgba(255,255,255,0.12);
             padding: 8px 34px 8px 10px;
@@ -140,7 +132,7 @@
             left: 0;
             right: 0;
             top: calc(100% + 6px);
-            background: rgba(18, 18, 18, 0.92);
+            background: rgba(0, 0, 0);
             border: 1px solid rgba(255,255,255,0.12);
             border-radius: 12px;
             padding: 6px;
@@ -177,10 +169,10 @@
             transition: background-color 0.2s ease, color 0.2s ease;
         }
         .custom-select-option:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.2);
         }
         .custom-select-option.active {
-            background: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.2);
             color: rgba(248, 247, 244, 1);
         }
         .native-select {
@@ -225,7 +217,7 @@
     <script src="fast-load.js"></script>
 </head>
 <body>
-    <button id="open-settings-btn">Tùy chỉnh</button>
+    <button id="open-settings-btn">Tùy chỉnh (Settings)</button>
 
     <div id="settings-panel">
         <div class="panel-header">
@@ -246,11 +238,11 @@
             <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false"></button>
             <div class="custom-select-options" role="listbox"></div>
             <select id="bg-position" class="native-select">
-                <option value="center">Chính giữa</option>
-                <option value="left">Sát trái</option>
-                <option value="right">Sát phải</option>
-                <option value="top">Sát trên</option>
-                <option value="bottom">Sát dưới</option>
+                <option value="center">Chính giữa (Center)</option>
+                <option value="left">Sát trái (Left)</option>
+                <option value="right">Sát phải (Right)</option>
+                <option value="top">Sát trên (Top)</option>
+                <option value="bottom">Sát dưới (Bottom)</option>
             </select>
         </div>
     </div>
