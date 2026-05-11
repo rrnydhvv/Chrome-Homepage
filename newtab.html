@@ -14,6 +14,7 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            overflow: hidden;
             opacity: 0; /* Giữ ẩn cho đến khi ảnh sẵn sàng */
             transition: opacity 0.2s ease-in;
         }
@@ -57,18 +58,18 @@
             position: absolute;
             bottom: 70px;
             right: 24px;
-            background-color: rgba(32, 33, 36, 0.95);
-            color: white;
+            background-color: rgba(20, 20, 20, 0.355);
+            color: rgba(248, 247, 244, 0.85);
             padding: 20px;
             border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.08);
             font-family: sans-serif;
             width: 260px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.45);
             display: none; /* Ẩn mặc định */
             flex-direction: column;
             gap: 15px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
         }
 
         /* Hiển thị bảng điều khiển khi có class 'show' */
@@ -80,15 +81,130 @@
             gap: 5px;
         }
 
-        .setting-group label { font-size: 13px; color: #aaa; }
+        .setting-group label { font-size: 13px; color: rgba(248, 247, 244, 0.6); }
         
-        .setting-group select, .setting-group input[type="file"] {
-            background-color: #303134;
-            color: white;
-            border: 1px solid #5f6368;
-            padding: 6px;
-            border-radius: 4px;
+        .setting-group input[type="file"] {
+            background-color: rgba(18, 18, 18, 0.6);
+            color: rgba(248, 247, 244, 0.9);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 8px 10px;
+            border-radius: 12px;
             cursor: pointer;
+            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+            font-size: 13px;
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            background-clip: padding-box;
+        }
+        .setting-group input[type="file"]:hover {
+            background-color: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255,255,255,0.22);
+        }
+        .setting-group input[type="file"]:focus-visible {
+            outline: none;
+            border-color: rgba(255,255,255,0.35);
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.12);
+        }
+        .custom-select {
+            position: relative;
+        }
+        .custom-select-trigger {
+            width: 100%;
+            text-align: left;
+            background-color: rgba(18, 18, 18, 0.6);
+            color: rgba(248, 247, 244, 0.92);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 8px 34px 8px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+            font-size: 13px;
+            background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(248,247,244,0.7)' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-position: 0 0, calc(100% - 12px) 50%;
+            background-size: auto, 10px 6px;
+            background-repeat: no-repeat;
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            background-clip: padding-box;
+        }
+        .custom-select-trigger:hover {
+            background-color: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255,255,255,0.22);
+        }
+        .custom-select-trigger:focus-visible {
+            outline: none;
+            border-color: rgba(255,255,255,0.35);
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.12);
+        }
+        .custom-select-options {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 6px);
+            background: rgba(18, 18, 18, 0.92);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            padding: 6px;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.4);
+            opacity: 0;
+            transform: translateY(-4px);
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            z-index: 5;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .custom-select.open .custom-select-options {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .custom-select.open-up .custom-select-options {
+            top: auto;
+            bottom: calc(100% + 6px);
+            transform: translateY(4px);
+        }
+        .custom-select-option {
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            color: rgba(248, 247, 244, 0.9);
+            border: none;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+            font-size: 13px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .custom-select-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .custom-select-option.active {
+            background: rgba(255, 255, 255, 0.14);
+            color: rgba(248, 247, 244, 1);
+        }
+        .native-select {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            height: 0;
+        }
+        input[type="file"]::file-selector-button {
+            margin-right: 10px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.08);
+            color: rgba(248, 247, 244, 0.85);
+            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background: rgba(255,255,255,0.14);
+            border-color: rgba(255,255,255,0.28);
         }
 
         /* Tiêu đề & Nút đóng */
@@ -96,12 +212,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #5f6368;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
             padding-bottom: 10px;
         }
         .panel-header h3 { margin: 0; font-size: 16px; }
-        #close-btn { background: none; border: none; color: white; cursor: pointer; font-weight: bold; }
-        #close-btn:hover { color: #f28b82; }
+        #close-btn { background: none; border: none; color: rgba(248, 247, 244, 0.7); cursor: pointer; font-weight: bold; }
+        #close-btn:hover { color: rgba(248, 247, 244, 0.95); }
 
     </style>
 
@@ -117,18 +233,26 @@
             <button id="close-btn">X</button>
         </div>
         <input type="file" id="bg-upload" accept="image/*">
-        <select id="bg-size">
-            <option value="cover">Phủ kín (Cover)</option>
-            <option value="contain">Vừa vặn (Contain)</option>
-            <option value="100% 100%">Kéo giãn (Stretch)</option>
-        </select>
-        <select id="bg-position">
-            <option value="center">Chính giữa</option>
-            <option value="left">Sát trái</option>
-            <option value="right">Sát phải</option>
-            <option value="top">Sát trên</option>
-            <option value="bottom">Sát dưới</option>
-        </select>
+        <div class="custom-select">
+            <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false"></button>
+            <div class="custom-select-options" role="listbox"></div>
+            <select id="bg-size" class="native-select">
+                <option value="cover">Phủ kín (Cover)</option>
+                <option value="contain">Vừa vặn (Contain)</option>
+                <option value="100% 100%">Kéo giãn (Stretch)</option>
+            </select>
+        </div>
+        <div class="custom-select">
+            <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false"></button>
+            <div class="custom-select-options" role="listbox"></div>
+            <select id="bg-position" class="native-select">
+                <option value="center">Chính giữa</option>
+                <option value="left">Sát trái</option>
+                <option value="right">Sát phải</option>
+                <option value="top">Sát trên</option>
+                <option value="bottom">Sát dưới</option>
+            </select>
+        </div>
     </div>
 
     <!-- GỌI FILE XỬ LÝ CÀI ĐẶT Ở ĐÂY -->

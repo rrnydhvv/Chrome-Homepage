@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Kiểm tra xem các nút có tồn tại không trước khi gán sự kiện
     if (openBtn && settingsPanel) {
-        openBtn.onclick = () => settingsPanel.classList.add('show');
+        openBtn.onclick = () => settingsPanel.classList.toggle('show');
     }
     if (closeBtn && settingsPanel) {
         closeBtn.onclick = () => settingsPanel.classList.remove('show');
@@ -58,6 +58,87 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.backgroundPosition = positionSelect.value;
     };
 
-    if (sizeSelect) sizeSelect.onchange = saveSettings;
-    if (positionSelect) positionSelect.onchange = saveSettings;
+    const closeAllCustomSelects = (except) => {
+        document.querySelectorAll('.custom-select.open').forEach((selectEl) => {
+            if (selectEl !== except) {
+                selectEl.classList.remove('open');
+                const trigger = selectEl.querySelector('.custom-select-trigger');
+                if (trigger) trigger.setAttribute('aria-expanded', 'false');
+            }
+        });
+    };
+
+    const initCustomSelect = (selectEl) => {
+        if (!selectEl) return;
+        const wrapper = selectEl.closest('.custom-select');
+        if (!wrapper) return;
+
+        const trigger = wrapper.querySelector('.custom-select-trigger');
+        const optionsContainer = wrapper.querySelector('.custom-select-options');
+        if (!trigger || !optionsContainer) return;
+
+        const renderOptions = () => {
+            optionsContainer.innerHTML = '';
+            Array.from(selectEl.options).forEach((option) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'custom-select-option';
+                btn.textContent = option.textContent;
+                btn.dataset.value = option.value;
+                btn.setAttribute('role', 'option');
+                if (option.selected) btn.classList.add('active');
+                btn.addEventListener('click', () => {
+                    selectEl.value = option.value;
+                    selectEl.dispatchEvent(new Event('change'));
+                    wrapper.classList.remove('open');
+                    trigger.setAttribute('aria-expanded', 'false');
+                });
+                optionsContainer.appendChild(btn);
+            });
+        };
+
+        const updateDropdownPlacement = () => {
+            const triggerRect = trigger.getBoundingClientRect();
+            const availableBelow = window.innerHeight - triggerRect.bottom - 12;
+            const availableAbove = triggerRect.top - 12;
+            const needed = optionsContainer.scrollHeight;
+            const openUp = availableBelow < needed && availableAbove > availableBelow;
+            wrapper.classList.toggle('open-up', openUp);
+        };
+
+        const syncTrigger = () => {
+            const selected = selectEl.options[selectEl.selectedIndex];
+            trigger.textContent = selected ? selected.textContent : 'Chon';
+            optionsContainer.querySelectorAll('.custom-select-option').forEach((btn) => {
+                btn.classList.toggle('active', btn.dataset.value === selectEl.value);
+            });
+        };
+
+        renderOptions();
+        syncTrigger();
+
+        trigger.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const isOpen = wrapper.classList.toggle('open');
+            trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            if (isOpen) {
+                closeAllCustomSelects(wrapper);
+                requestAnimationFrame(updateDropdownPlacement);
+            }
+        });
+
+        selectEl.addEventListener('change', () => {
+            syncTrigger();
+            saveSettings();
+        });
+    };
+
+    initCustomSelect(sizeSelect);
+    initCustomSelect(positionSelect);
+
+    document.addEventListener('click', () => closeAllCustomSelects());
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeAllCustomSelects();
+    });
+    window.addEventListener('resize', () => closeAllCustomSelects());
 });
