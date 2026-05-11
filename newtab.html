@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thẻ mới</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
+
+        body {
+            margin: 0; padding: 0; height: 100vh;
+            background-color: #1a1a1a;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0; /* Giữ ẩn cho đến khi ảnh sẵn sàng */
+            transition: opacity 0.2s ease-in;
+        }
+        body.loaded { opacity: 1; }
+        
+        /* Nút mở bảng cài đặt */
+        #open-settings-btn {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            padding: 9px 14px;
+            background: rgba(20, 20, 20, 0.18);
+            color: rgba(248, 247, 244, 0.45);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 999px;
+            cursor: pointer;
+            backdrop-filter: blur(2px);
+            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            box-shadow: none;
+            opacity: 0.5;
+            transition: opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+        #open-settings-btn:hover {
+            opacity: 0.9;
+            background: rgba(20, 20, 20, 0.35);
+            border-color: rgba(255,255,255,0.2);
+        }
+        #open-settings-btn:active {
+            opacity: 1;
+        }
+        #open-settings-btn:focus-visible {
+            outline: 2px solid rgba(240, 236, 228, 0.5);
+            outline-offset: 2px;
+        }
+
+        /* Khung bảng điều khiển */
+        #settings-panel {
+            position: absolute;
+            bottom: 70px;
+            right: 24px;
+            background-color: rgba(32, 33, 36, 0.95);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-family: sans-serif;
+            width: 260px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none; /* Ẩn mặc định */
+            flex-direction: column;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Hiển thị bảng điều khiển khi có class 'show' */
+        #settings-panel.show { display: flex; }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .setting-group label { font-size: 13px; color: #aaa; }
+        
+        .setting-group select, .setting-group input[type="file"] {
+            background-color: #303134;
+            color: white;
+            border: 1px solid #5f6368;
+            padding: 6px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Tiêu đề & Nút đóng */
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #5f6368;
+            padding-bottom: 10px;
+        }
+        .panel-header h3 { margin: 0; font-size: 16px; }
+        #close-btn { background: none; border: none; color: white; cursor: pointer; font-weight: bold; }
+        #close-btn:hover { color: #f28b82; }
+
+    </style>
+
+    <!-- GỌI FILE LOAD NHANH Ở ĐÂY -->
+    <script src="fast-load.js"></script>
+</head>
+<body>
+    <button id="open-settings-btn">Tùy chỉnh</button>
+
+    <div id="settings-panel">
+        <div class="panel-header">
+            <h3>Cài đặt nền</h3>
+            <button id="close-btn">X</button>
+        </div>
+        <input type="file" id="bg-upload" accept="image/*">
+        <select id="bg-size">
+            <option value="cover">Phủ kín (Cover)</option>
+            <option value="contain">Vừa vặn (Contain)</option>
+            <option value="100% 100%">Kéo giãn (Stretch)</option>
+        </select>
+        <select id="bg-position">
+            <option value="center">Chính giữa</option>
+            <option value="left">Sát trái</option>
+            <option value="right">Sát phải</option>
+            <option value="top">Sát trên</option>
+            <option value="bottom">Sát dưới</option>
+        </select>
+    </div>
+
+    <!-- GỌI FILE XỬ LÝ CÀI ĐẶT Ở ĐÂY -->
+    <script src="newtab.js"></script>
+</body>
+</html>

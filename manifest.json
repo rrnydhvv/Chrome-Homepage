@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Chrome Homepage",
+  "version": "1.0",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "permissions": [
+    "storage",
+    "unlimitedStorage"
+  ]
+}
