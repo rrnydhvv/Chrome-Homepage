@@ -83,6 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'custom-select-option';
+                const alignClass = option.value === 'left'
+                    ? 'align-left'
+                    : option.value === 'right'
+                        ? 'align-right'
+                        : 'align-center';
+                btn.classList.add(alignClass);
                 btn.textContent = option.textContent;
                 btn.dataset.value = option.value;
                 btn.setAttribute('role', 'option');

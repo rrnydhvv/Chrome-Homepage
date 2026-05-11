@@ -26,14 +26,17 @@
             bottom: 24px;
             right: 24px;
             padding: 9px 14px;
-            background: rgba(20, 20, 20, 0.18);
-            color: rgba(248, 247, 244, 0.45);
+            background: rgba(0, 0, 0, 0.72);
+            color: rgba(255, 255, 255, 0.5);
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 999px;
             cursor: pointer;
             backdrop-filter: blur(2px);
             font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
             font-size: 13px;
+            .custom-select-option.align-left { text-align: left; }
+            .custom-select-option.align-center { text-align: center; }
+            .custom-select-option.align-right { text-align: right; }
             font-weight: 500;
             letter-spacing: 0.2px;
             box-shadow: none;
@@ -42,7 +45,7 @@
         }
         #open-settings-btn:hover {
             opacity: 0.9;
-            background: rgba(20, 20, 20, 0.35);
+            background: rgba(0, 0, 0, 0.5);
             border-color: rgba(255,255,255,0.2);
         }
         #open-settings-btn:active {
@@ -132,7 +135,7 @@
             left: 0;
             right: 0;
             top: calc(100% + 6px);
-            background: rgba(0, 0, 0);
+            background: rgba(0, 0, 0, 0.95);
             border: 1px solid rgba(255,255,255,0.12);
             border-radius: 12px;
             padding: 6px;
@@ -168,6 +171,9 @@
             font-size: 13px;
             transition: background-color 0.2s ease, color 0.2s ease;
         }
+        .custom-select-option.align-left { text-align: left; }
+        .custom-select-option.align-center { text-align: center; }
+        .custom-select-option.align-right { text-align: right; }
         .custom-select-option:hover {
             background: rgba(255, 255, 255, 0.2);
         }
@@ -217,11 +223,11 @@
     <script src="fast-load.js"></script>
 </head>
 <body>
-    <button id="open-settings-btn">Tùy chỉnh (Settings)</button>
+    <button id="open-settings-btn">Settings</button>
 
     <div id="settings-panel">
         <div class="panel-header">
-            <h3>Cài đặt nền</h3>
+            <h3>Background Settings</h3>
             <button id="close-btn">X</button>
         </div>
         <input type="file" id="bg-upload" accept="image/*">
@@ -229,20 +235,20 @@
             <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false"></button>
             <div class="custom-select-options" role="listbox"></div>
             <select id="bg-size" class="native-select">
-                <option value="cover">Phủ kín (Cover)</option>
-                <option value="contain">Vừa vặn (Contain)</option>
-                <option value="100% 100%">Kéo giãn (Stretch)</option>
+                <option value="cover">Fill</option>
+                <option value="contain">Fit</option>
+                <option value="100% 100%">Fat</option>
             </select>
         </div>
         <div class="custom-select">
             <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false"></button>
             <div class="custom-select-options" role="listbox"></div>
             <select id="bg-position" class="native-select">
-                <option value="center">Chính giữa (Center)</option>
-                <option value="left">Sát trái (Left)</option>
-                <option value="right">Sát phải (Right)</option>
-                <option value="top">Sát trên (Top)</option>
-                <option value="bottom">Sát dưới (Bottom)</option>
+                <option value="top">Top</option>
+                <option value="left">Left</option>
+                <option value="center">Center</option>
+                <option value="right">Right</option>
+                <option value="bottom">Bottom</option>
             </select>
         </div>
     </div>
