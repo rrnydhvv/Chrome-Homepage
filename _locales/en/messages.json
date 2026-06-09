@@ -1,0 +1,9 @@
+{
+  "pageTitle": { "message": "New Tab" },
+  "btnSettings": { "message": "Settings" },
+  "panelTitle": { "message": "Background Settings" },
+  "labelZoom": { "message": "Zoom" },
+  "labelPanX": { "message": "Pan X" },
+  "labelPanY": { "message": "Pan Y" },
+  "btnReset": { "message": "Reset" }
+}

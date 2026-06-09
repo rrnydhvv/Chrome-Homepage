@@ -1,13 +1,25 @@
 // newtab.js
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Dịch đa ngôn ngữ (i18n)
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const msg = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
+        if (msg) el.textContent = msg;
+    });
+
     const fileInput = document.getElementById('bg-upload');
-    const sizeSelect = document.getElementById('bg-size');
-    const positionSelect = document.getElementById('bg-position');
     const openBtn = document.getElementById('open-settings-btn');
     const closeBtn = document.getElementById('close-btn');
     const settingsPanel = document.getElementById('settings-panel');
+    const resetBtn = document.getElementById('reset-btn');
 
-    // Kiểm tra xem các nút có tồn tại không trước khi gán sự kiện
+    const zoomSlider = document.getElementById('bg-zoom');
+    const panXSlider = document.getElementById('bg-pan-x');
+    const panYSlider = document.getElementById('bg-pan-y');
+    const zoomVal = document.getElementById('val-zoom');
+    const panXVal = document.getElementById('val-pan-x');
+    const panYVal = document.getElementById('val-pan-y');
+
+    // Mở / đóng cài đặt
     if (openBtn && settingsPanel) {
         openBtn.onclick = () => settingsPanel.classList.toggle('show');
     }
@@ -15,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeBtn.onclick = () => settingsPanel.classList.remove('show');
     }
 
-    // Logic nén và lưu ảnh (tăng nét, vẫn tối ưu dung lượng)
+    // Xử lý nén ảnh và lưu vào IndexedDB
     if (fileInput) {
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
@@ -40,111 +52,100 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, 0, 0, width, height);
 
-                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.92);
-                chrome.storage.local.set({ customBackground: compressedBase64 }, () => {
-                    window.location.reload(); 
-                });
+                // Chuyển Canvas thành Blob thay vì Base64
+                canvas.toBlob((blob) => {
+                    if (window.saveImageBlob && blob) {
+                        window.saveImageBlob(blob).then(() => {
+                            window.location.reload();
+                        }).catch(err => console.error('Lỗi khi lưu ảnh', err));
+                    }
+                }, 'image/jpeg', 0.92);
             };
             img.src = URL.createObjectURL(file);
         };
     }
 
+    // Khởi tạo thanh trượt từ Storage
+    chrome.storage.local.get(['bgZoom', 'bgPanX', 'bgPanY'], (res) => {
+        const z = res.bgZoom !== undefined ? res.bgZoom : 100;
+        const px = res.bgPanX !== undefined ? res.bgPanX : 50;
+        const py = res.bgPanY !== undefined ? res.bgPanY : 50;
+        
+        zoomSlider.value = z; zoomVal.value = z;
+        panXSlider.value = px; panXVal.value = px;
+        panYSlider.value = py; panYVal.value = py;
+    });
+
+    // Cập nhật giao diện khi kéo thanh trượt
+    const applyRealTimeStyles = () => {
+        const z = zoomSlider.value;
+        const px = panXSlider.value;
+        const py = panYSlider.value;
+
+        zoomVal.value = z;
+        panXVal.value = px;
+        panYVal.value = py;
+
+        document.body.style.backgroundSize = `${z}%`;
+        document.body.style.backgroundPosition = `${px}% ${py}%`;
+    };
+
+    // Lưu vào storage
     const saveSettings = () => {
-        chrome.storage.local.set({ 
-            bgSize: sizeSelect.value, 
-            bgPosition: positionSelect.value 
-        });
-        document.body.style.backgroundSize = sizeSelect.value;
-        document.body.style.backgroundPosition = positionSelect.value;
-    };
-
-    const closeAllCustomSelects = (except) => {
-        document.querySelectorAll('.custom-select.open').forEach((selectEl) => {
-            if (selectEl !== except) {
-                selectEl.classList.remove('open');
-                const trigger = selectEl.querySelector('.custom-select-trigger');
-                if (trigger) trigger.setAttribute('aria-expanded', 'false');
-            }
+        chrome.storage.local.set({
+            bgZoom: parseInt(zoomSlider.value, 10),
+            bgPanX: parseInt(panXSlider.value, 10),
+            bgPanY: parseInt(panYSlider.value, 10)
         });
     };
 
-    const initCustomSelect = (selectEl) => {
-        if (!selectEl) return;
-        const wrapper = selectEl.closest('.custom-select');
-        if (!wrapper) return;
+    // Lắng nghe sự kiện thanh trượt
+    [zoomSlider, panXSlider, panYSlider].forEach(slider => {
+        if (slider) {
+            slider.addEventListener('input', applyRealTimeStyles);
+            slider.addEventListener('change', saveSettings);
+        }
+    });
 
-        const trigger = wrapper.querySelector('.custom-select-trigger');
-        const optionsContainer = wrapper.querySelector('.custom-select-options');
-        if (!trigger || !optionsContainer) return;
-
-        const renderOptions = () => {
-            optionsContainer.innerHTML = '';
-            Array.from(selectEl.options).forEach((option) => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'custom-select-option';
-                const alignClass = option.value === 'left'
-                    ? 'align-left'
-                    : option.value === 'right'
-                        ? 'align-right'
-                        : 'align-center';
-                btn.classList.add(alignClass);
-                btn.textContent = option.textContent;
-                btn.dataset.value = option.value;
-                btn.setAttribute('role', 'option');
-                if (option.selected) btn.classList.add('active');
-                btn.addEventListener('click', () => {
-                    selectEl.value = option.value;
-                    selectEl.dispatchEvent(new Event('change'));
-                    wrapper.classList.remove('open');
-                    trigger.setAttribute('aria-expanded', 'false');
-                });
-                optionsContainer.appendChild(btn);
-            });
+    // Lắng nghe sự kiện từ ô nhập số
+    const setupNumberInput = (slider, input) => {
+        if (!input || !slider) return;
+        
+        const syncFromInput = () => {
+            let val = parseInt(input.value, 10);
+            if (isNaN(val)) val = slider.value;
+            // Ép vào giới hạn của thanh trượt để tránh lỗi
+            if (val < parseInt(slider.min)) val = slider.min;
+            if (val > parseInt(slider.max)) val = slider.max;
+            
+            input.value = val;
+            slider.value = val;
+            
+            document.body.style.backgroundSize = `${zoomSlider.value}%`;
+            document.body.style.backgroundPosition = `${panXSlider.value}% ${panYSlider.value}%`;
         };
 
-        const updateDropdownPlacement = () => {
-            const triggerRect = trigger.getBoundingClientRect();
-            const availableBelow = window.innerHeight - triggerRect.bottom - 12;
-            const availableAbove = triggerRect.top - 12;
-            const needed = optionsContainer.scrollHeight;
-            const openUp = availableBelow < needed && availableAbove > availableBelow;
-            wrapper.classList.toggle('open-up', openUp);
-        };
-
-        const syncTrigger = () => {
-            const selected = selectEl.options[selectEl.selectedIndex];
-            trigger.textContent = selected ? selected.textContent : 'Chon';
-            optionsContainer.querySelectorAll('.custom-select-option').forEach((btn) => {
-                btn.classList.toggle('active', btn.dataset.value === selectEl.value);
-            });
-        };
-
-        renderOptions();
-        syncTrigger();
-
-        trigger.addEventListener('click', (event) => {
-            event.stopPropagation();
-            const isOpen = wrapper.classList.toggle('open');
-            trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-            if (isOpen) {
-                closeAllCustomSelects(wrapper);
-                requestAnimationFrame(updateDropdownPlacement);
-            }
-        });
-
-        selectEl.addEventListener('change', () => {
-            syncTrigger();
+        // Khi người dùng gõ số, cho xem trước ngay
+        input.addEventListener('input', syncFromInput);
+        // Khi gõ xong (blur/enter), lưu lại
+        input.addEventListener('change', () => {
+            syncFromInput();
             saveSettings();
         });
     };
 
-    initCustomSelect(sizeSelect);
-    initCustomSelect(positionSelect);
+    setupNumberInput(zoomSlider, zoomVal);
+    setupNumberInput(panXSlider, panXVal);
+    setupNumberInput(panYSlider, panYVal);
 
-    document.addEventListener('click', () => closeAllCustomSelects());
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') closeAllCustomSelects();
-    });
-    window.addEventListener('resize', () => closeAllCustomSelects());
+    // Reset button
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            zoomSlider.value = 100;
+            panXSlider.value = 50;
+            panYSlider.value = 50;
+            applyRealTimeStyles();
+            saveSettings();
+        });
+    }
 });

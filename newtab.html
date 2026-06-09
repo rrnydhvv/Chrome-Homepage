@@ -1,256 +1,60 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Thẻ mới</title>
+    <title data-i18n="pageTitle">New Tab</title>
     <link rel="icon" type="image/png" href="icon.png">
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
+    <link rel="stylesheet" href="newtab.css">
 
-        body {
-            margin: 0; padding: 0; height: 100vh;
-            background-color: #1a1a1a;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            overflow: hidden;
-            opacity: 0; /* Giữ ẩn cho đến khi ảnh sẵn sàng */
-            transition: opacity 0.2s ease-in;
-        }
-        body.loaded { opacity: 1; }
-        
-        /* Nút mở bảng cài đặt */
-        #open-settings-btn {
-            position: absolute;
-            bottom: 24px;
-            right: 24px;
-            padding: 9px 14px;
-            background: rgba(0, 0, 0, 0.72);
-            color: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 999px;
-            cursor: pointer;
-            backdrop-filter: blur(2px);
-            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
-            font-size: 13px;
-            .custom-select-option.align-left { text-align: left; }
-            .custom-select-option.align-center { text-align: center; }
-            .custom-select-option.align-right { text-align: right; }
-            font-weight: 500;
-            letter-spacing: 0.2px;
-            box-shadow: none;
-            opacity: 0.5;
-            transition: opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-        }
-        #open-settings-btn:hover {
-            opacity: 0.9;
-            background: rgba(0, 0, 0, 0.5);
-            border-color: rgba(255,255,255,0.2);
-        }
-        #open-settings-btn:active {
-            opacity: 1;
-        }
-        #open-settings-btn:focus-visible {
-            outline: 2px solid rgba(240, 236, 228, 0.5);
-            outline-offset: 2px;
-        }
-
-        /* Khung bảng điều khiển */
-        #settings-panel {
-            position: absolute;
-            bottom: 70px;
-            right: 24px;
-            background-color: rgba(0, 0, 0, 0.25);
-            color: rgba(248, 247, 244, 0.85);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.08);
-            font-family: sans-serif;
-            width: 260px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.45);
-            display: none; /* Ẩn mặc định */
-            flex-direction: column;
-            gap: 15px;
-            backdrop-filter: blur(12px);
-        }
-
-        /* Hiển thị bảng điều khiển khi có class 'show' */
-        #settings-panel.show { display: flex; }
-
-        input[type="file"] {
-            background-color: rgba(0, 0, 0, 0.3);
-            color: rgba(248, 247, 244, 0.9);
-            border: 1px solid rgba(255,255,255,0.12);
-            padding: 8px 10px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
-            font-size: 13px;
-            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-            background-clip: padding-box;
-        }
-        input[type="file"]:hover {
-            background-color: rgba(255, 255, 255, 0.09);
-            border-color: rgba(255,255,255,0.22);
-        }
-        input[type="file"]:focus-visible {
-            outline: none;
-            border-color: rgba(255,255,255,0.35);
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.12);
-        }
-        .custom-select {
-            position: relative;
-        }
-        .custom-select-trigger {
-            width: 100%;
-            text-align: left;
-            background-color: rgba(0, 0, 0, 0.3);
-            color: rgba(248, 247, 244, 0.92);
-            border: 1px solid rgba(255,255,255,0.12);
-            padding: 8px 34px 8px 10px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
-            font-size: 13px;
-            background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(248,247,244,0.7)' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-            background-position: 0 0, calc(100% - 12px) 50%;
-            background-size: auto, 10px 6px;
-            background-repeat: no-repeat;
-            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-            background-clip: padding-box;
-        }
-        .custom-select-trigger:hover {
-            background-color: rgba(255, 255, 255, 0.09);
-            border-color: rgba(255,255,255,0.22);
-        }
-        .custom-select-trigger:focus-visible {
-            outline: none;
-            border-color: rgba(255,255,255,0.35);
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.12);
-        }
-        .custom-select-options {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: calc(100% + 6px);
-            background: rgba(0, 0, 0, 0.95);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 12px;
-            padding: 6px;
-            box-shadow: 0 14px 28px rgba(0,0,0,0.4);
-            opacity: 0;
-            transform: translateY(-4px);
-            pointer-events: none;
-            transition: opacity 0.18s ease, transform 0.18s ease;
-            z-index: 5;
-            max-height: 220px;
-            overflow-y: auto;
-        }
-        .custom-select.open .custom-select-options {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-        .custom-select.open-up .custom-select-options {
-            top: auto;
-            bottom: calc(100% + 6px);
-            transform: translateY(4px);
-        }
-        .custom-select-option {
-            width: 100%;
-            text-align: left;
-            background: transparent;
-            color: rgba(248, 247, 244, 0.9);
-            border: none;
-            padding: 8px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
-            font-size: 13px;
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-        .custom-select-option.align-left { text-align: left; }
-        .custom-select-option.align-center { text-align: center; }
-        .custom-select-option.align-right { text-align: right; }
-        .custom-select-option:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        .custom-select-option.active {
-            background: rgba(255, 255, 255, 0.2);
-            color: rgba(248, 247, 244, 1);
-        }
-        .native-select {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-            width: 0;
-            height: 0;
-        }
-        input[type="file"]::file-selector-button {
-            margin-right: 10px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.18);
-            background: rgba(255,255,255,0.08);
-            color: rgba(248, 247, 244, 0.85);
-            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
-            font-size: 12px;
-            cursor: pointer;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-        }
-        input[type="file"]::file-selector-button:hover {
-            background: rgba(255,255,255,0.14);
-            border-color: rgba(255,255,255,0.28);
-        }
-
-        /* Tiêu đề & Nút đóng */
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.12);
-            padding-bottom: 10px;
-        }
-        .panel-header h3 { margin: 0; font-size: 16px; }
-        #close-btn { background: none; border: none; color: rgba(248, 247, 244, 0.7); cursor: pointer; font-weight: bold; }
-        #close-btn:hover { color: rgba(248, 247, 244, 0.95); }
-
-    </style>
-
+    <!-- Helper IndexedDB -->
+    <script src="db.js"></script>
     <!-- GỌI FILE LOAD NHANH Ở ĐÂY -->
     <script src="fast-load.js"></script>
 </head>
 <body>
-    <button id="open-settings-btn">Settings</button>
+    <button id="open-settings-btn" data-i18n="btnSettings">Settings</button>
 
     <div id="settings-panel">
         <div class="panel-header">
-            <h3>Background Settings</h3>
+            <h3 data-i18n="panelTitle">Background Settings</h3>
             <button id="close-btn">X</button>
         </div>
         <input type="file" id="bg-upload" accept="image/*">
-        <div class="custom-select">
-            <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false"></button>
-            <div class="custom-select-options" role="listbox"></div>
-            <select id="bg-size" class="native-select">
-                <option value="cover">Fill</option>
-                <option value="contain">Fit</option>
-                <option value="100% 100%">Fat</option>
-            </select>
+        
+        <div class="slider-container">
+            <div class="slider-header">
+                <span data-i18n="labelZoom">Zoom</span>
+                <div class="slider-input-group">
+                    <input type="number" id="val-zoom" class="slider-number-input" min="10" max="1000" value="100">
+                    <span>%</span>
+                </div>
+            </div>
+            <input type="range" id="bg-zoom" min="10" max="300" value="100">
         </div>
-        <div class="custom-select">
-            <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false"></button>
-            <div class="custom-select-options" role="listbox"></div>
-            <select id="bg-position" class="native-select">
-                <option value="top">Top</option>
-                <option value="left">Left</option>
-                <option value="center">Center</option>
-                <option value="right">Right</option>
-                <option value="bottom">Bottom</option>
-            </select>
+
+        <div class="slider-container">
+            <div class="slider-header">
+                <span data-i18n="labelPanX">Pan X</span>
+                <div class="slider-input-group">
+                    <input type="number" id="val-pan-x" class="slider-number-input" min="0" max="100" value="50">
+                    <span>%</span>
+                </div>
+            </div>
+            <input type="range" id="bg-pan-x" min="0" max="100" value="50">
         </div>
+
+        <div class="slider-container">
+            <div class="slider-header">
+                <span data-i18n="labelPanY">Pan Y</span>
+                <div class="slider-input-group">
+                    <input type="number" id="val-pan-y" class="slider-number-input" min="0" max="100" value="50">
+                    <span>%</span>
+                </div>
+            </div>
+            <input type="range" id="bg-pan-y" min="0" max="100" value="50">
+        </div>
+
+        <button id="reset-btn" data-i18n="btnReset">Reset</button>
     </div>
 
     <!-- GỌI FILE XỬ LÝ CÀI ĐẶT Ở ĐÂY -->

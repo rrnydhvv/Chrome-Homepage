@@ -1,0 +1,9 @@
+{
+  "pageTitle": { "message": "Thẻ mới" },
+  "btnSettings": { "message": "Cài đặt" },
+  "panelTitle": { "message": "Cài đặt hình nền" },
+  "labelZoom": { "message": "Phóng to (Zoom)" },
+  "labelPanX": { "message": "Dịch ngang (Pan X)" },
+  "labelPanY": { "message": "Dịch dọc (Pan Y)" },
+  "btnReset": { "message": "Đặt lại" }
+}
